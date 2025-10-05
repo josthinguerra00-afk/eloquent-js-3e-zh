@@ -1,24 +1,95 @@
-# JavaScript 编程精解 中文第三版
 
-原书：[Eloquent JavaScript 3rd edition](http://eloquentjavascript.net/)
+local gui = Instance.new("ScreenGui")
+gui.Name = "BelicoHub"
+gui.ResetOnSpawn = false
+gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-译者：[飞龙](https://github.com/wizardforcel)
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 200, 0, 150)
+frame.Position = UDim2.new(0.1, 0, 0.3, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+frame.BackgroundTransparency = 0.2
+frame.BorderSizePixel = 0
+frame.Parent = gui
 
-自豪地采用[谷歌翻译](https://translate.google.cn/)
+-- Título
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 30)
+title.BackgroundTransparency = 1
+title.Text = "💥 Hub Bélico 💥"
+title.TextColor3 = Color3.fromRGB(255, 0, 0)
+title.Font = Enum.Font.GothamBold
+title.TextSize = 18
+title.Parent = frame
 
-部分参考了[《JavaScript 编程精解（第 2 版）》](https://book.douban.com/subject/26707144/)
+-- Variables
+local savedPos = nil
+local noclip = false
+local player = game.Players.LocalPlayer
+local char = player.Character or player.CharacterAdded:Wait()
+local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
 
-+ [在线阅读](https://www.gitbook.com/book/wizardforcel/eloquent-js-3e/details)
-+ [PDF格式](https://www.gitbook.com/download/pdf/book/wizardforcel/eloquent-js-3e)
-+ [EPUB格式](https://www.gitbook.com/download/epub/book/wizardforcel/eloquent-js-3e)
-+ [MOBI格式](https://www.gitbook.com/download/mobi/book/wizardforcel/eloquent-js-3e)
-+ [代码仓库](https://github.com/wizardforcel/eloquent-js-3e-zh)
+-- Crear función de botón
+local function createButton(name, text, order, callback)
+	local btn = Instance.new("TextButton")
+	btn.Name = name
+	btn.Size = UDim2.new(1, -20, 0, 30)
+	btn.Position = UDim2.new(0, 10, 0, 35 + (order * 35))
+	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	btn.Font = Enum.Font.GothamBold
+	btn.TextSize = 16
+	btn.Text = text
+	btn.Parent = frame
 
+	btn.MouseButton1Click:Connect(callback)
+end
 
-## 赞助我
+-- Botón Tp (guardar posición)
+createButton("Tp", "Guardar posición", 0, function()
+	if char and humanoidRootPart then
+		savedPos = humanoidRootPart.CFrame
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Bélico 💥";
+			Text = "Ubicación guardada.";
+			Duration = 2;
+		})
+	end
+end)
 
-![](img/qr_alipay.png)
+-- Botón Tp2 (teletransportar)
+createButton("Tp2", "Ir a posición", 1, function()
+	if savedPos and humanoidRootPart then
+		humanoidRootPart.CFrame = savedPos
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Bélico 💥";
+			Text = "Teletransportado con éxito.";
+			Duration = 2;
+		})
+	else
+		game.StarterGui:SetCore("SendNotification", {
+			Title = "Bélico ⚠️";
+			Text = "No hay ubicación guardada.";
+			Duration = 2;
+		})
+	end
+end)
 
-## 协议
+-- Botón Tras (atravesar paredes)
+createButton("Tras", "Traspasar pared", 2, function()
+	noclip = not noclip
+	game.StarterGui:SetCore("SendNotification", {
+		Title = "Bélico 💥";
+		Text = noclip and "Modo traspaso ACTIVADO." or "Modo traspaso DESACTIVADO.";
+		Duration = 2;
+	})
 
-[CC BY-NC-SA 4.0](http://creativecommons.org/licenses/by-nc-sa/4.0/)
+	while noclip do
+		task.wait()
+		for _, part in pairs(char:GetDescendants()) do
+			if part:IsA("BasePart") then
+				part.CanCollide = false
+			end
+		end
+	end
+end)
