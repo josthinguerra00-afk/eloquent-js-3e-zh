@@ -1,4 +1,3 @@
-
 local gui = Instance.new("ScreenGui")
 gui.Name = "BelicoHub"
 gui.ResetOnSpawn = false
@@ -12,7 +11,6 @@ frame.BackgroundTransparency = 0.2
 frame.BorderSizePixel = 0
 frame.Parent = gui
 
--- Título
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, 0, 0, 30)
 title.BackgroundTransparency = 1
@@ -22,14 +20,12 @@ title.Font = Enum.Font.GothamBold
 title.TextSize = 18
 title.Parent = frame
 
--- Variables
 local savedPos = nil
 local noclip = false
 local player = game.Players.LocalPlayer
 local char = player.Character or player.CharacterAdded:Wait()
 local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
 
--- Crear función de botón
 local function createButton(name, text, order, callback)
 	local btn = Instance.new("TextButton")
 	btn.Name = name
