@@ -1,95 +1,105 @@
-
-local gui = Instance.new("ScreenGui")
-gui.Name = "BelicoHub"
-gui.ResetOnSpawn = false
-gui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 200, 0, 150)
-frame.Position = UDim2.new(0.1, 0, 0.3, 0)
-frame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-frame.BackgroundTransparency = 0.2
-frame.BorderSizePixel = 0
-frame.Parent = gui
-
--- Título
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.BackgroundTransparency = 1
-title.Text = "💥 Hub Bélico 💥"
-title.TextColor3 = Color3.fromRGB(255, 0, 0)
-title.Font = Enum.Font.GothamBold
-title.TextSize = 18
-title.Parent = frame
-
--- Variables
-local savedPos = nil
-local noclip = false
 local player = game.Players.LocalPlayer
-local char = player.Character or player.CharacterAdded:Wait()
-local humanoidRootPart = char:WaitForChild("HumanoidRootPart")
+local PlayerGui = player:WaitForChild("PlayerGui")
 
--- Crear función de botón
-local function createButton(name, text, order, callback)
+-- Crear GUI
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "JossHub"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.Parent = PlayerGui
+
+-- Crear marco principal
+local Frame = Instance.new("Frame")
+Frame.Size = UDim2.new(0, 230, 0, 220)
+Frame.Position = UDim2.new(0.05, 0, 0.3, 0)
+Frame.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
+Frame.Active = true
+Frame.Draggable = true
+Frame.Parent = ScreenGui
+
+local UICorner = Instance.new("UICorner")
+UICorner.CornerRadius = UDim.new(0, 10)
+UICorner.Parent = Frame
+
+-- Barra de título
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 30)
+TitleBar.BackgroundColor3 = Color3.fromRGB(55, 55, 55)
+TitleBar.Parent = Frame
+
+local Title = Instance.new("TextLabel")
+Title.Text = "🌀 Joss Hub"
+Title.Size = UDim2.new(1, -30, 1, 0)
+Title.Position = UDim2.new(0, 10, 0, 0)
+Title.BackgroundTransparency = 1
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 16
+Title.TextXAlignment = Enum.TextXAlignment.Left
+Title.Parent = TitleBar
+
+local CloseButton = Instance.new("TextButton")
+CloseButton.Text = "✖"
+CloseButton.Size = UDim2.new(0, 30, 1, 0)
+CloseButton.Position = UDim2.new(1, -30, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(150, 50, 50)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Font = Enum.Font.GothamBold
+CloseButton.TextSize = 16
+CloseButton.Parent = TitleBar
+
+local savedPos = nil
+
+-- Función crear botón
+local function createButton(name, yPos, color, callback)
 	local btn = Instance.new("TextButton")
-	btn.Name = name
-	btn.Size = UDim2.new(1, -20, 0, 30)
-	btn.Position = UDim2.new(0, 10, 0, 35 + (order * 35))
-	btn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+	btn.Text = name
+	btn.Size = UDim2.new(0.9, 0, 0, 40)
+	btn.Position = UDim2.new(0.05, 0, 0, yPos)
+	btn.BackgroundColor3 = color
 	btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	btn.Font = Enum.Font.GothamBold
-	btn.TextSize = 16
-	btn.Text = text
-	btn.Parent = frame
+	btn.Font = Enum.Font.Gotham
+	btn.TextSize = 14
+	btn.Parent = Frame
+
+	local corner = Instance.new("UICorner")
+	corner.CornerRadius = UDim.new(0, 8)
+	corner.Parent = btn
 
 	btn.MouseButton1Click:Connect(callback)
 end
 
--- Botón Tp (guardar posición)
-createButton("Tp", "Guardar posición", 0, function()
-	if char and humanoidRootPart then
-		savedPos = humanoidRootPart.CFrame
-		game.StarterGui:SetCore("SendNotification", {
-			Title = "Bélico 💥";
-			Text = "Ubicación guardada.";
-			Duration = 2;
-		})
-	end
+-- Botón Tp
+createButton("📍 Tp (Guardar)", 40, Color3.fromRGB(70, 130, 180), function()
+	local char = player.Character or player.CharacterAdded:Wait()
+	local root = char:WaitForChild("HumanoidRootPart")
+	savedPos = root.CFrame
+	game.StarterGui:SetCore("SendNotification", {Title="Joss Hub", Text="Ubicación guardada ✔️", Duration=2})
 end)
 
--- Botón Tp2 (teletransportar)
-createButton("Tp2", "Ir a posición", 1, function()
-	if savedPos and humanoidRootPart then
-		humanoidRootPart.CFrame = savedPos
-		game.StarterGui:SetCore("SendNotification", {
-			Title = "Bélico 💥";
-			Text = "Teletransportado con éxito.";
-			Duration = 2;
-		})
+-- Botón Tp2
+createButton("🚀 Tp2 (Ir)", 90, Color3.fromRGB(100, 180, 100), function()
+	if savedPos then
+		local char = player.Character or player.CharacterAdded:Wait()
+		local root = char:WaitForChild("HumanoidRootPart")
+		root.CFrame = savedPos
+		game.StarterGui:SetCore("SendNotification", {Title="Joss Hub", Text="Teletransportado ✅", Duration=2})
 	else
-		game.StarterGui:SetCore("SendNotification", {
-			Title = "Bélico ⚠️";
-			Text = "No hay ubicación guardada.";
-			Duration = 2;
-		})
+		game.StarterGui:SetCore("SendNotification", {Title="Joss Hub", Text="Primero guarda una ubicación ❌", Duration=2})
 	end
 end)
 
--- Botón Tras (atravesar paredes)
-createButton("Tras", "Traspasar pared", 2, function()
-	noclip = not noclip
-	game.StarterGui:SetCore("SendNotification", {
-		Title = "Bélico 💥";
-		Text = noclip and "Modo traspaso ACTIVADO." or "Modo traspaso DESACTIVADO.";
-		Duration = 2;
-	})
-
-	while noclip do
-		task.wait()
-		for _, part in pairs(char:GetDescendants()) do
-			if part:IsA("BasePart") then
-				part.CanCollide = false
-			end
+-- Botón TRAS
+createButton("🧱 TRAS (Traspasar)", 140, Color3.fromRGB(200, 100, 100), function()
+	local char = player.Character or player.CharacterAdded:Wait()
+	for _, part in pairs(char:GetDescendants()) do
+		if part:IsA("BasePart") then
+			part.CanCollide = not part.CanCollide
 		end
 	end
+	game.StarterGui:SetCore("SendNotification", {Title="Joss Hub", Text="Modo traspaso cambiado ⚙️", Duration=2})
+end)
+
+-- Cerrar hub
+CloseButton.MouseButton1Click:Connect(function()
+	Frame.Visible = false
 end)
